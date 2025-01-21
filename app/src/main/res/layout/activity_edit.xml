@@ -1,0 +1,67 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/eventInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="できごと"/>
+
+        <EditText
+            android:id="@+id/observationInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="観察"/>
+
+        <EditText
+            android:id="@+id/feelingsInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="感情"/>
+
+        <EditText
+            android:id="@+id/needsInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ニーズ"/>
+
+        <EditText
+            android:id="@+id/requestInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="リクエスト"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="キャンセル"/>
+
+            <!-- ボタン間にスペースを作るためのマージン -->
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="保存"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
