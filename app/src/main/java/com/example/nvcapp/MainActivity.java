@@ -87,18 +87,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null) {
-            NvcItem newItem = NvcItem.fromJson(data.getStringExtra("item"));
-            int position = data.getIntExtra("position", -1);
 
-            if (requestCode == REQUEST_CODE_NEW_ITEM) { // 新規追加
-                itemList.add(newItem);
-            } else if (requestCode == REQUEST_CODE_EDIT_ITEM && position != -1) { // 編集
-                itemList.set(position, newItem);
+        // Edit or New Item
+        if (requestCode == REQUEST_CODE_NEW_ITEM || requestCode == REQUEST_CODE_EDIT_ITEM) {
+            if (resultCode == RESULT_OK && data != null) {
+                NvcItem newItem = NvcItem.fromJson(data.getStringExtra("item"));
+                int position = data.getIntExtra("position", -1);
+
+                if (requestCode == REQUEST_CODE_NEW_ITEM) { // 新規追加
+                    itemList.add(newItem);
+                } else if (requestCode == REQUEST_CODE_EDIT_ITEM && position != -1) { // 編集
+                    itemList.set(position, newItem);
+                }
+
+                adapter.notifyDataSetChanged();
+                JsonUtil.saveData(this, itemList);
             }
-
-            adapter.notifyDataSetChanged();
-            JsonUtil.saveData(this, itemList);
         }
 
         // for Google Drive (Save & Load)
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void signIn(int requestCode) {
+        Log.i("MainActivity", "signIn : request code --> " + requestCode);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
                 .requestEmail()
@@ -152,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                                 new NetHttpTransport(),
                                 new JacksonFactory(),
                                 credential)
-                                .setApplicationName("My Goal Application")
+                                .setApplicationName("NVC Application")
                                 .build();
 
                 Gson gson = new Gson();
@@ -162,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                     // フォルダが存在するかチェック
                     String folderId = null;
                     FileList result = driveService.files().list()
-                            .setQ("name = 'MyGoalApplicationData' and mimeType = 'application/vnd.google-apps.folder'")
+                            .setQ("name = 'NvcAppData' and mimeType = 'application/vnd.google-apps.folder'")
                             .setSpaces("drive")
                             .setFields("files(id)")
                             .execute();
@@ -172,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         // フォルダを作成
                         File folderMetadata = new File();
-                        folderMetadata.setName("MyGoalApplicationData");
+                        folderMetadata.setName("NvcAppData");
                         folderMetadata.setMimeType("application/vnd.google-apps.folder");
 
                         File folder = driveService.files().create(folderMetadata)
@@ -184,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                     // 日時付きファイル名の生成
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
                     String timestamp = sdf.format(new Date());
-                    String fileName = "my_goal_application_data_" + timestamp + ".json";
+                    String fileName = "nvc_app_data_" + timestamp + ".json";
 
                     // ファイルをフォルダ内に作成
                     File fileMetadata = new File();
@@ -249,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // フォルダ内のファイル一覧取得 (my_goal_application_data_*.json)
                     FileList fileResult = driveService.files().list()
-                            .setQ("'" + folderId + "' in parents and name contains 'my_goal_application_data_' and name contains '.json'")
+                            .setQ("'" + folderId + "' in parents and name contains 'nvc_app_data_' and name contains '.json'")
                             .setSpaces("drive")
                             .setFields("files(id, name, createdTime)")
                             .setOrderBy("createdTime desc") // 最新順にソート
